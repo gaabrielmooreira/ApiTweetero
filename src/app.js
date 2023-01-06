@@ -12,7 +12,16 @@ const tweets = [];
 app.post("/sign-up",(req, res) => {
     const novoUsuario = req.body;
     usuarios.push(novoUsuario);
-    console.log(usuarios);
+    res.send("OK");
+})
+
+app.post("/tweets", (req, res) =>{
+    const infoTweet = req.body;
+    const findUsername = usuarios.find((usuario) => usuario.username === infoTweet.username);
+    if(!findUsername){
+        res.send("UNAUTHORIZED");
+    }
+    tweets.push(infoTweet);
     res.send("OK");
 })
 
