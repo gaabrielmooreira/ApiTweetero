@@ -1,6 +1,8 @@
 import express from "express";
+import cors from "cors";
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 const PORT = 5000;
@@ -11,7 +13,9 @@ const tweets = [];
 
 app.post("/sign-up",(req, res) => {
     const novoUsuario = req.body;
+    if(usuarios.find((u) => u.username === novoUsuario.username)) return;
     usuarios.push(novoUsuario);
+    console.log(usuarios);
     res.send("OK");
 })
 
@@ -20,9 +24,23 @@ app.post("/tweets", (req, res) =>{
     const findUsername = usuarios.find((usuario) => usuario.username === infoTweet.username);
     if(!findUsername){
         res.send("UNAUTHORIZED");
+        return;
     }
     tweets.push(infoTweet);
     res.send("OK");
+})
+
+app.get("/tweets", (req,res) =>{
+    const lastTenTweets = [];
+    const idxInicio = tweets.length < 10 ? 0:(tweets.length-10);
+
+    for(let i = idxInicio; i < tweets.length; i++){
+        const {username, tweet} = tweets[i];
+        const avatar = (usuarios.find((usuario) => usuario.username === username)).avatar;
+        const infoTweet = {username,avatar,tweet};
+        lastTenTweets.push(infoTweet);
+    }
+    res.send(lastTenTweets);
 })
 
 app.listen(PORT, () => console.log("O servidor foi iniciado com sucesso."));
