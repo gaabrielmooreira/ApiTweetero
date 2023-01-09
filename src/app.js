@@ -7,21 +7,24 @@ app.use(express.json());
 
 const PORT = 5000;
 
-const usuarios = [];
+const users = [];
 
 const tweets = [];
 
 app.post("/sign-up",(req, res) => {
-    const novoUsuario = req.body;
-    if(usuarios.find((u) => u.username === novoUsuario.username)) return;
-    usuarios.push(novoUsuario);
-    console.log(usuarios);
+    const {username,avatar} = req.body;
+    if((!username && typeof username !== "string") || (!avatar && typeof avatar !== "string")){
+        return res.status(400).send("Todos os campos são obrigatórios!");
+    } 
+    if(users.find((user) => user.username === username)) return res.status(400).send("Nome de usuario já existente.");
+    users.push({username,avatar});
     res.status(201).send("OK");
 })
 
 app.post("/tweets", (req, res) =>{
-    const infoTweet = req.body;
-    const findUsername = usuarios.find((usuario) => usuario.username === infoTweet.username);
+    const {tweet, username} = req.body;
+    if(!tweet && typeof tweet !== "string" || !username && typeof username !== "string") return res.status(400).send("Todos os campos são obrigatórios!"); 
+    const findUsername = users.find((user) => user.username === username);
     if(!findUsername){
         return res.status(401).send("UNAUTHORIZED");;
     }
@@ -31,11 +34,11 @@ app.post("/tweets", (req, res) =>{
 
 app.get("/tweets", (req,res) =>{
     const lastTenTweets = [];
-    const idxInicio = tweets.length < 10 ? 0:(tweets.length-10);
+    const startIndex = tweets.length < 10 ? 0:(tweets.length-10);
 
-    for(let i = idxInicio; i < tweets.length; i++){
+    for(let i = startIndex; i < tweets.length; i++){
         const {username, tweet} = tweets[i];
-        const avatar = (usuarios.find((usuario) => usuario.username === username)).avatar;
+        const avatar = (users.find((user) => user.username === username)).avatar;
         const infoTweet = {username,avatar,tweet};
         lastTenTweets.push(infoTweet);
     }
