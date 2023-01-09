@@ -16,18 +16,17 @@ app.post("/sign-up",(req, res) => {
     if(usuarios.find((u) => u.username === novoUsuario.username)) return;
     usuarios.push(novoUsuario);
     console.log(usuarios);
-    res.send("OK");
+    res.status(201).send("OK");
 })
 
 app.post("/tweets", (req, res) =>{
     const infoTweet = req.body;
     const findUsername = usuarios.find((usuario) => usuario.username === infoTweet.username);
     if(!findUsername){
-        res.send("UNAUTHORIZED");
-        return;
+        return res.status(401).send("UNAUTHORIZED");;
     }
     tweets.push(infoTweet);
-    res.send("OK");
+    res.status(201).send("OK");
 })
 
 app.get("/tweets", (req,res) =>{
