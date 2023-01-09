@@ -13,7 +13,9 @@ const tweets = [];
 
 app.post("/sign-up",(req, res) => {
     const newUser = req.body;
-    if((!newUser.username && typeof newUser.username !== "string") || (!newUser.avatar && typeof newUser.avatar !== "string")){
+    const validUser = (newUser.username && newUser.username.length > 0 && typeof(newUser.username) === "string");
+    const validAvatar = (newUser.avatar && newUser.avatar.length > 0 && typeof(newUser.avatar) === "string");
+    if(!validUser || !validAvatar){
         return res.status(400).send("Todos os campos são obrigatórios!");
     } 
     if(users.find((user) => user.username === newUser.username)) return res.status(400).send("Nome de usuario já existente.");
@@ -24,7 +26,9 @@ app.post("/sign-up",(req, res) => {
 
 app.post("/tweets", (req, res) =>{
     const infoTweet = req.body;
-    if(!infoTweet.tweet && typeof infoTweet.tweet !== "string" || !infoTweet.username && typeof infoTweet.username !== "string") return res.status(400).send("Todos os campos são obrigatórios!"); 
+    const validTweet = (infoTweet.tweet && infoTweet.tweet.length > 0 && typeof(infoTweet.tweet) === "string");
+    const validUser = (infoTweet.username && infoTweet.username.length > 0 && typeof(infoTweet.username) === "string");
+    if(!validTweet || !validUser) return res.status(400).send("Todos os campos são obrigatórios!"); 
     const findUsername = users.find((user) => user.username === infoTweet.username);
     if(!findUsername){
         return res.status(401).send("UNAUTHORIZED");;
