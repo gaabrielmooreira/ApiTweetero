@@ -54,7 +54,7 @@ app.get("/tweets/:USERNAME", (req, res) => {
     const USERNAME = req.params.USERNAME;
     const tweetsUser = tweets.filter((t) => t.username === USERNAME );
     if (!tweetsUser) return res.send([]);
-    const avatar = (users.find((user) => user.username === USERNAME));
+    const avatar = (users.find((user) => user.username === USERNAME)).avatar;
     const allInfoTweetsUser = tweetsUser.map((t) => (
         {
             username: t.username, 
